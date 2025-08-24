@@ -7,6 +7,8 @@
 #include "mmu.h"
 #include "proc.h"
 
+
+static uint seed = 1;
 int
 sys_fork(void)
 {
@@ -79,6 +81,7 @@ sys_sleep(void)
 
 // return how many clock tick interrupts have occurred
 // since start.
+
 int
 sys_uptime(void)
 {
@@ -88,4 +91,32 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+static uint
+simple_random(void)
+{
+  seed = seed * 1664525 + 1013904223;
+  return seed;
+}
+
+int 
+sys_helloos(void)
+{
+  cprintf("hello os\n");
+  return 0;
+}
+int
+sys_getrandom(void)
+{
+  uint xticks;
+  
+  // Use current ticks as additional entropy
+  acquire(&tickslock);
+  xticks = ticks;
+  release(&tickslock);
+  
+  // Mix with process ID for more randomness
+  seed ^= xticks ^ myproc()->pid;
+  
+  return simple_random();
 }

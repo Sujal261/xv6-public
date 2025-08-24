@@ -23,6 +23,8 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int  helloos(void);
+int getrandom(void);
 
 // ulib.c
 int stat(const char*, struct stat*);
@@ -37,3 +39,5 @@ void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
 int atoi(const char*);
+
+

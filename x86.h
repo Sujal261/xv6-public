@@ -1,7 +1,7 @@
 // Routines to let C code use special x86 instructions.
 
 static inline uchar
-inb(ushort port)
+inb(ushort port) //reads a byte from an I/O port 
 {
   uchar data;
 
@@ -10,7 +10,7 @@ inb(ushort port)
 }
 
 static inline void
-insl(int port, void *addr, int cnt)
+insl(int port, void *addr, int cnt) // reads cnt doublewords from an I/O port 
 {
   asm volatile("cld; rep insl" :
                "=D" (addr), "=c" (cnt) :
@@ -19,19 +19,19 @@ insl(int port, void *addr, int cnt)
 }
 
 static inline void
-outb(ushort port, uchar data)
+outb(ushort port, uchar data) // writes a byte to an io port
 {
   asm volatile("out %0,%1" : : "a" (data), "d" (port));
 }
 
 static inline void
-outw(ushort port, ushort data)
+outw(ushort port, ushort data)//writes a word in io port 
 {
   asm volatile("out %0,%1" : : "a" (data), "d" (port));
 }
 
 static inline void
-outsl(int port, const void *addr, int cnt)
+outsl(int port, const void *addr, int cnt)// writes the count of double words from memory to an io port
 {
   asm volatile("cld; rep outsl" :
                "=S" (addr), "=c" (cnt) :
@@ -40,7 +40,7 @@ outsl(int port, const void *addr, int cnt)
 }
 
 static inline void
-stosb(void *addr, int data, int cnt)
+stosb(void *addr, int data, int cnt) //sets the count bytes to addr to the byte data
 {
   asm volatile("cld; rep stosb" :
                "=D" (addr), "=c" (cnt) :
@@ -49,7 +49,7 @@ stosb(void *addr, int data, int cnt)
 }
 
 static inline void
-stosl(void *addr, int data, int cnt)
+stosl(void *addr, int data, int cnt) //sets the cnt doublewords at addr to the doubleword data
 {
   asm volatile("cld; rep stosl" :
                "=D" (addr), "=c" (cnt) :
@@ -60,7 +60,7 @@ stosl(void *addr, int data, int cnt)
 struct segdesc;
 
 static inline void
-lgdt(struct segdesc *p, int size)
+lgdt(struct segdesc *p, int size)//loads the global descriptor table register with pointer to a segment descriptor table
 {
   volatile ushort pd[3];
 
@@ -74,7 +74,7 @@ lgdt(struct segdesc *p, int size)
 struct gatedesc;
 
 static inline void
-lidt(struct gatedesc *p, int size)
+lidt(struct gatedesc *p, int size)//loads the interrupt Descriptor table register
 {
   volatile ushort pd[3];
 
@@ -131,7 +131,7 @@ xchg(volatile uint *addr, uint newval)
 }
 
 static inline uint
-rcr2(void)
+rcr2(void) //reads the control register cr2
 {
   uint val;
   asm volatile("movl %%cr2,%0" : "=r" (val));
@@ -139,7 +139,7 @@ rcr2(void)
 }
 
 static inline void
-lcr3(uint val)
+lcr3(uint val)//loads control register cr3 
 {
   asm volatile("movl %0,%%cr3" : : "r" (val));
 }
