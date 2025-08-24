@@ -9,6 +9,12 @@
 
 struct {
   struct spinlock lock;
+  unsigned int total_syscalls;
+} syscall_counter;
+
+
+struct {
+  struct spinlock lock;
   struct proc proc[NPROC];
 } ptable;
 
@@ -88,6 +94,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->numsyscalls = 0; 
 
   release(&ptable.lock);
 

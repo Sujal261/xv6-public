@@ -183,7 +183,11 @@ UPROGS=\
 	_zombie\
 	_test_helloos\
 	_test_random\
-	_randfile
+	_randfile\
+	_countsyscalls\
+	_testsys\
+	_totalcount\
+	_testtotal\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)

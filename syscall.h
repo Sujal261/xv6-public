@@ -22,4 +22,5 @@
 #define SYS_close  21
 #define SYS_helloos 22
 #define SYS_getrandom 23
-
+#define SYS_countsyscalls 24
+#define SYS_totalcount 25

@@ -25,6 +25,8 @@ int sleep(int);
 int uptime(void);
 int  helloos(void);
 int getrandom(void);
+int countsyscalls(void);
+int totalcount(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

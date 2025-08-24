@@ -6,6 +6,7 @@
 #include "proc.h"
 #include "x86.h"
 #include "syscall.h"
+#include "syscall_counter.h"
 
 // User code makes a system call with INT T_SYSCALL.
 // System call number in %eax.
@@ -107,6 +108,10 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_helloos(void);
 extern int sys_getrandom(void);
+extern int sys_countsyscalls(void);
+extern int sys_totalcount(void);
+extern int sys_countsyscalls(void);
+
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -132,22 +137,28 @@ static int (*syscalls[])(void) = {
 [SYS_close]   sys_close,
 [SYS_helloos] sys_helloos,
 [SYS_getrandom] sys_getrandom,
-
+[SYS_countsyscalls] sys_countsyscalls,
+[SYS_totalcount]   sys_totalcount,
 };
 
 
-void
-syscall(void)
+void syscall(void)
 {
-  int num;
-  struct proc *curproc = myproc();
+    int num;
+    struct proc *curproc = myproc();
 
-  num = curproc->tf->eax;
-  if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
-    curproc->tf->eax = syscalls[num]();
-  } else {
-    cprintf("%d %s: unknown sys call %d\n",
-            curproc->pid, curproc->name, num);
-    curproc->tf->eax = -1;
-  }
+    num = curproc->tf->eax;
+    if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
+        curproc->tf->eax = syscalls[num]();
+
+        acquire(&syscall_counter.lock);
+        syscall_counter.total_syscalls++;
+        release(&syscall_counter.lock);
+
+        curproc->numsyscalls++;
+    } else {
+        cprintf("%d %s: unknown sys call %d\n",
+                curproc->pid, curproc->name, num);
+        curproc->tf->eax = -1;
+    }
 }

@@ -5,6 +5,7 @@
 #include "mmu.h"
 #include "proc.h"
 #include "x86.h"
+#include "syscall_counter.h"
 
 static void startothers(void);
 static void mpmain(void)  __attribute__((noreturn));
@@ -27,6 +28,9 @@ main(void)
   consoleinit();   // console hardware
   uartinit();      // serial port
   pinit();         // process table
+  initlock(&syscall_counter.lock, "syscall_counter");
+  syscall_counter.total_syscalls = 0;
+
   tvinit();        // trap vectors
   binit();         // buffer cache
   fileinit();      // file table

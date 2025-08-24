@@ -6,6 +6,7 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+#include "syscall_counter.h"
 
 
 static uint seed = 1;
@@ -119,4 +120,17 @@ sys_getrandom(void)
   seed ^= xticks ^ myproc()->pid;
   
   return simple_random();
+}
+
+unsigned int sys_countsyscalls(void) {
+    struct proc *p = myproc();
+    return p->numsyscalls; // assuming you added this field to track syscall count
+}
+
+unsigned int sys_totalcount(void) {
+    unsigned int count;
+    acquire(&syscall_counter.lock);
+    count = syscall_counter.total_syscalls;
+    release(&syscall_counter.lock);
+    return count;
 }
